@@ -2,7 +2,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Dict, Any
 
-from .base import JobSource
+from app.sources.base import JobSource
 
 logger = logging.getLogger(__name__)
 
