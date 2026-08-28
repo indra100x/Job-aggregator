@@ -1,7 +1,9 @@
-import requests
-from typing import List, Dict, Any
+import logging
+from typing import Any, Dict, List
 
 from .base import JobSource
+
+logger = logging.getLogger(__name__)
 
 
 class RemotiveAPI(JobSource):
@@ -13,13 +15,16 @@ class RemotiveAPI(JobSource):
         return "remotive_api"
 
     def fetch_jobs(self) -> List[Dict[str, Any]]:
-        response = requests.get(
-            self.BASE_URL,
-            timeout=10
-        )
+        response = self._get(self.BASE_URL)
+        if response is None:
+            return []
 
-        response.raise_for_status()
+        try:
+            data = response.json()
+        except ValueError as e:
+            logger.error(f"[{self.name}] Invalid JSON: {e}")
+            return []
 
-        data = response.json()
-
-        return data.get("jobs", [])
+        jobs = data.get("jobs", [])
+        logger.info(f"[{self.name}] Fetched {len(jobs)} jobs")
+        return [self._normalize(job) for job in jobs]
