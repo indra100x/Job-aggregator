@@ -14,6 +14,7 @@ class Job:
     company: Company
     source: Source
     url: str
+    category: str|None
 
     location: Optional[str] = None
     salary: Optional[str] = None
